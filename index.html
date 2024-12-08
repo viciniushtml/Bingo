@@ -84,12 +84,17 @@
             background-color: #555;
             color: white;
             font-style: italic;
-            cursor: default;
+            cursor: pointer;
         }
 
         .bingo-container > div.center-tile span {
             transform: rotate(-45deg);
             display: inline-block;
+        }
+
+        .bingo-container > div.center-tile.clicked {
+            background-color: #e74c3c;
+            color: white;
         }
 
         /* Button and input styles */
@@ -259,7 +264,7 @@
                 // Center tile logic for square grids
                 if (isSquare && numTiles % 2 === 1 && i === Math.floor(numTiles / 2)) {
                     tile.classList.add('center-tile');
-                    tile.innerHTML = `<span>Nautibingo</span>`;
+                    tile.innerHTML = `<span onclick="handleNautibingoClick()">Nautibingo</span>`;
                 } else {
                     const tileContent = document.getElementById(`tile-${inputIndex}`)?.value || `Tile ${inputIndex + 1}`;
                     tile.textContent = tileContent;
@@ -273,6 +278,11 @@
             }
             tileInputs.style.display = "none";
             document.getElementById('startGame').style.display = "none";
+        }
+
+        function handleNautibingoClick() {
+            const centerTile = document.querySelector('.center-tile');
+            centerTile.classList.toggle('clicked');
         }
     </script>
 </body>
