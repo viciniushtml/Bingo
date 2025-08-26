@@ -89,10 +89,10 @@
         
         .shuffle-btn {
             background: #333;
-            color: #ffcc00;
+            color: #ff6b08;
             border: 2px solid #ff6b08;
             padding: 10px 15px;
-            font-size: 1.2rem;
+            font-size: 1.8rem;
             border-radius: 0;
             cursor: pointer;
             transition: all 0.3s;
@@ -135,6 +135,7 @@
             height: 22px;
             background: #000;
             border: 2px solid #444;
+            cursor: pointer;
         }
         
         .slider-progress {
@@ -145,7 +146,8 @@
             top: 0;
             left: 0;
             border-right: 2px solid #cc0000;
-            transition: width 0.3s ease;
+            transition: width 0.1s ease;
+            pointer-events: none;
         }
         
         input[type="range"] {
@@ -160,17 +162,7 @@
             left: 0;
             z-index: 2;
             cursor: pointer;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            background: #ffcc00;
-            border-radius: 0;
-            cursor: pointer;
-            border: 1px solid #ff6b08;
-            box-shadow: 0 0 5px #ff6b08;
+            opacity: 0;
         }
         
         .slider-value {
@@ -184,7 +176,7 @@
         
         textarea {
             width: 100%;
-            height: 120px;
+            height: 200px;
             padding: 12px;
             border: 2px solid #444;
             resize: vertical;
@@ -272,23 +264,6 @@
             color: #00ccff;
             border-color: #00ccff;
             text-shadow: 1px 1px 0 #000;
-        }
-        
-        .instructions {
-            background-color: #111;
-            border-left: 5px solid #ff6b08;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 10px;
-            color: #ffcc00;
-            font-family: 'Special Elite', cursive;
         }
         
         .url-share {
@@ -478,8 +453,13 @@
         
         <div class="control-panel" id="control-panel">
             <div class="form-group">
+                <label for="card-name-input">Nome da Cartela:</label>
+                <input type="text" id="card-name-input" class="editable-title" value="Bingo da Meia-Noite" placeholder="Digite o nome da sua cartela">
+            </div>
+            
+            <div class="form-group">
                 <label for="rows">Linhas:</label>
-                <div class="slider-container">
+                <div class="slider-container" id="rows-slider">
                     <div class="slider-progress" id="rows-progress" style="width: 50%;"></div>
                     <input type="range" id="rows" min="3" max="10" value="5" step="1">
                 </div>
@@ -488,7 +468,7 @@
             
             <div class="form-group">
                 <label for="columns">Colunas:</label>
-                <div class="slider-container">
+                <div class="slider-container" id="columns-slider">
                     <div class="slider-progress" id="columns-progress" style="width: 50%;"></div>
                     <input type="range" id="columns" min="3" max="10" value="5" step="1">
                 </div>
@@ -501,16 +481,27 @@
 Noite chuvosa
 Sombras alongadas
 Poste quebrado
-Pichação obscura</textarea>
-            </div>
-            
-            <div class="instructions">
-                <ul>
-                    <li>Ajuste os controles para definir o número de linhas e colunas</li>
-                    <li>Digite os itens do bingo (um por linha)</li>
-                    <li>Clique em "Gerar Cartela" para criar sua cartela</li>
-                    <li>Clique nas células para marcá-las como selecionadas</li>
-                </ul>
+Pichação obscura
+Vulto distante
+Grito abafado
+Luz oscilante
+Porta rangendo
+Vidro quebrado
+Rato correndo
+Cachorro uivando
+Sirene distante
+Pessoa suspeita
+Carro abandonado
+Lixo espalhado
+Graffiti político
+Poster rasgado
+Escada incerta
+Corredor escuro
+Poeira acumulada
+Teia de aranha
+Cheiro estranho
+Som inexplicável
+Silêncio absoluto</textarea>
             </div>
             
             <div class="button-container">
@@ -521,7 +512,7 @@ Pichação obscura</textarea>
         <div class="bingo-card-container" id="card-container" style="display: none;">
             <div class="title-container">
                 <input type="text" class="editable-title" id="card-title" value="Bingo da Meia-Noite" placeholder="Digite o título da sua cartela">
-                <button class="shuffle-btn" id="shuffle-btn">🔀 Embaralhar</button>
+                <button class="shuffle-btn" id="shuffle-btn">🔀</button>
             </div>
             
             <div id="bingo-card" class="bingo-card"></div>
@@ -545,9 +536,11 @@ Pichação obscura</textarea>
             const rowsSlider = document.getElementById('rows');
             const rowsValue = document.getElementById('rows-value');
             const rowsProgress = document.getElementById('rows-progress');
+            const rowsSliderContainer = document.getElementById('rows-slider');
             const columnsSlider = document.getElementById('columns');
             const columnsValue = document.getElementById('columns-value');
             const columnsProgress = document.getElementById('columns-progress');
+            const columnsSliderContainer = document.getElementById('columns-slider');
             const contentsTextarea = document.getElementById('contents');
             const generateBtn = document.getElementById('generate-btn');
             const newCardBtn = document.getElementById('new-card-btn');
@@ -556,6 +549,7 @@ Pichação obscura</textarea>
             const copyBtn = document.getElementById('copy-btn');
             const bingoCardDiv = document.getElementById('bingo-card');
             const cardTitle = document.getElementById('card-title');
+            const cardNameInput = document.getElementById('card-name-input');
             const shareUrl = document.getElementById('share-url');
             const toast = document.getElementById('toast');
             const controlPanel = document.getElementById('control-panel');
@@ -566,23 +560,44 @@ Pichação obscura</textarea>
             let currentCardData = null;
             
             // Update slider values display
+            function updateSliderValue(slider, valueDisplay, progressBar) {
+                const value = slider.value;
+                valueDisplay.textContent = value;
+                progressBar.style.width = `${(value - 3) / 7 * 100}%`;
+            }
+            
             rowsSlider.addEventListener('input', () => {
-                const value = rowsSlider.value;
-                rowsValue.textContent = value;
-                rowsProgress.style.width = `${(value - 3) / 7 * 100}%`;
+                updateSliderValue(rowsSlider, rowsValue, rowsProgress);
             });
             
             columnsSlider.addEventListener('input', () => {
-                const value = columnsSlider.value;
-                columnsValue.textContent = value;
-                columnsProgress.style.width = `${(value - 3) / 7 * 100}%`;
+                updateSliderValue(columnsSlider, columnsValue, columnsProgress);
+            });
+            
+            // Click to set slider value
+            rowsSliderContainer.addEventListener('click', (e) => {
+                const rect = rowsSliderContainer.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                const min = parseInt(rowsSlider.min);
+                const max = parseInt(rowsSlider.max);
+                const value = Math.round(min + percent * (max - min));
+                rowsSlider.value = value;
+                updateSliderValue(rowsSlider, rowsValue, rowsProgress);
+            });
+            
+            columnsSliderContainer.addEventListener('click', (e) => {
+                const rect = columnsSliderContainer.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                const min = parseInt(columnsSlider.min);
+                const max = parseInt(columnsSlider.max);
+                const value = Math.round(min + percent * (max - min));
+                columnsSlider.value = value;
+                updateSliderValue(columnsSlider, columnsValue, columnsProgress);
             });
             
             // Set initial values
-            rowsValue.textContent = rowsSlider.value;
-            rowsProgress.style.width = `${(rowsSlider.value - 3) / 7 * 100}%`;
-            columnsValue.textContent = columnsSlider.value;
-            columnsProgress.style.width = `${(columnsSlider.value - 3) / 7 * 100}%`;
+            updateSliderValue(rowsSlider, rowsValue, rowsProgress);
+            updateSliderValue(columnsSlider, columnsValue, columnsProgress);
             
             // Check if URL has seed parameters
             if (window.location.search) {
@@ -610,15 +625,19 @@ Pichação obscura</textarea>
             // Copy URL button
             copyBtn.addEventListener('click', copyUrlToClipboard);
             
-            // Adjust title font size dynamically
-            cardTitle.addEventListener('input', function() {
+            // Sync card name input with title
+            cardNameInput.addEventListener('input', function() {
+                cardTitle.value = this.value;
                 const length = this.value.length;
                 if (length > 30) {
                     this.style.fontSize = '1.5rem';
+                    cardTitle.style.fontSize = '1.5rem';
                 } else if (length > 20) {
                     this.style.fontSize = '1.8rem';
+                    cardTitle.style.fontSize = '1.8rem';
                 } else {
                     this.style.fontSize = '2rem';
+                    cardTitle.style.fontSize = '2rem';
                 }
             });
             
@@ -626,6 +645,7 @@ Pichação obscura</textarea>
                 const rows = parseInt(rowsSlider.value);
                 const columns = parseInt(columnsSlider.value);
                 const contents = contentsTextarea.value.split('\n').filter(item => item.trim() !== '');
+                const cardName = cardNameInput.value;
                 
                 // Validate inputs
                 if (contents.length < rows * columns) {
@@ -634,7 +654,7 @@ Pichação obscura</textarea>
                 }
                 
                 // Create a seed based on the current inputs
-                currentSeed = createSeed(rows, columns, contents);
+                currentSeed = createSeed(rows, columns, contents, cardName);
                 
                 // Update URL with the seed
                 const newUrl = `${window.location.origin}${window.location.pathname}?seed=${currentSeed}`;
@@ -647,7 +667,8 @@ Pichação obscura</textarea>
                 currentCardData = {
                     rows: rows,
                     columns: columns,
-                    contents: contents
+                    contents: contents,
+                    cardName: cardName
                 };
                 
                 // Generate the card
@@ -668,7 +689,8 @@ Pichação obscura</textarea>
                 const newSeed = createSeed(
                     currentCardData.rows, 
                     currentCardData.columns, 
-                    currentCardData.contents
+                    currentCardData.contents,
+                    currentCardData.cardName
                 );
                 
                 // Update URL with the new seed
@@ -692,12 +714,13 @@ Pichação obscura</textarea>
                 }, 500);
             }
             
-            function createSeed(rows, columns, contents) {
+            function createSeed(rows, columns, contents, cardName) {
                 // Create a seed based on the inputs
                 const seedData = {
                     r: rows,
                     c: columns,
                     i: contents,
+                    n: cardName,
                     t: Date.now() // Add timestamp to make each seed unique
                 };
                 return btoa(JSON.stringify(seedData)).replace(/=/g, '');
@@ -728,19 +751,20 @@ Pichação obscura</textarea>
                     if (params) {
                         // Update form values
                         rowsSlider.value = params.r;
-                        rowsValue.textContent = params.r;
-                        rowsProgress.style.width = `${(params.r - 3) / 7 * 100}%`;
+                        updateSliderValue(rowsSlider, rowsValue, rowsProgress);
                         columnsSlider.value = params.c;
-                        columnsValue.textContent = params.c;
-                        columnsProgress.style.width = `${(params.c - 3) / 7 * 100}%`;
+                        updateSliderValue(columnsSlider, columnsValue, columnsProgress);
                         contentsTextarea.value = params.i.join('\n');
+                        cardNameInput.value = params.n || "Bingo da Meia-Noite";
+                        cardTitle.value = params.n || "Bingo da Meia-Noite";
                         
                         // Store current seed and card data
                         currentSeed = seed;
                         currentCardData = {
                             rows: params.r,
                             columns: params.c,
-                            contents: params.i
+                            contents: params.i,
+                            cardName: params.n || "Bingo da Meia-Noite"
                         };
                         
                         // Update share URL
