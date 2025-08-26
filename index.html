@@ -3,287 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Bingo Game</title>
+    <title>Bingo Card Generator</title>
     <style>
-        /* Body and global styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #2c2c2c;
-            color: #ffffff;
-            margin: 20px;
-            transition: background-color 0.3s;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
         }
-
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px 0;
+        }
+        
         h1 {
-            margin-bottom: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2.5rem;
         }
-
-        .instructions {
+        
+        h2 {
+            margin: 20px 0 10px;
+            color: #3498db;
+        }
+        
+        .form-group {
             margin-bottom: 20px;
-            font-size: 14px;
-            color: #ccc;
         }
-
-        .game-name-container {
-            margin-bottom: 20px;
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
-
-        .game-name-container input {
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #444;
-            color: white;
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
         }
-
-        .bingo-container {
-            display: grid;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px auto;
-            width: fit-content;
+        
+        .slider-value {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2980b9;
         }
-
-        /* Default tile styles for dark mode */
-        .bingo-container > div {
-            width: 100px;
-            height: 100px;
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 1rem;
+        }
+        
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .button-container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #ffffff;
-            background-color: #333;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 30px;
         }
-
-        /* Cheerful colors for light mode */
-        body.light-mode .bingo-container > div {
-            background-color: #f39c12;
-            color: #2c3e50;
-        }
-
-        body.light-mode .bingo-container > div.marked {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Hover effect */
-        .bingo-container > div:hover {
-            transform: scale(1.05);
-        }
-
-        /* Center tile styles */
-        .bingo-container > div.center-tile {
-            background-color: #555;
-            color: white;
-            font-style: italic;
-            cursor: pointer;
-        }
-
-        .bingo-container > div.center-tile span {
-            transform: rotate(-45deg);
-            display: inline-block;
-        }
-
-        .bingo-container > div.center-tile.clicked {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Button and input styles */
-        input, button {
-            padding: 10px;
-            margin: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        input {
-            background-color: #444;
-            color: white;
-        }
-
-        /* Light mode specific inputs */
-        body.light-mode input {
-            background-color: #f39c12;
-            color: #2c3e50;
-        }
-
+        
         button {
-            background-color: #4caf50;
+            background: #3498db;
             color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
-
+        
         button:hover {
-            background-color: #45a049;
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
         }
-
-        /* Dark mode drawer styles */
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #333;
-            transform: translateX(100%);
-            transition: transform 0.3s;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .drawer.open {
-            transform: translateX(0);
-        }
-
-        .drawer button {
-            background-color: #222;
-            border: 1px solid #fff;
-            color: white;
+        
+        .bingo-card {
+            display: none;
+            margin: 30px auto;
+            border-collapse: collapse;
             width: 100%;
-            margin-top: 10px;
+            max-width: 600px;
         }
-
-        .drawer h3 {
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .drawer-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #444;
-            color: white;
-            padding: 10px;
+        
+        .bingo-cell {
+            border: 3px solid #2c3e50;
+            height: 80px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.2rem;
+            font-weight: 500;
             cursor: pointer;
-            border-radius: 5px;
-            z-index: 1100;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .bingo-cell.selected {
+            background-color: #3498db;
+            color: white;
+            text-decoration: line-through;
+        }
+        
+        .bingo-cell.free {
+            background-color: #2ecc71;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .bingo-cell {
+                height: 60px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
-<body class="light-mode">
-    <h1>Customizable Bingo Game</h1>
-    <div class="game-name-container">
-        <label for="gameName">Game Name:</label>
-        <input type="text" id="gameName" placeholder="Enter game name" />
+<body>
+    <div class="container">
+        <h1>🎯 Bingo Card Generator</h1>
+        
+        <div class="form-group">
+            <label for="rows">Number of Rows:</label>
+            <input type="range" id="rows" min="3" max="10" value="5">
+            <div class="slider-value" id="rows-value">5</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="columns">Number of Columns:</label>
+            <input type="range" id="columns" min="3" max="10" value="5">
+            <div class="slider-value" id="columns-value">5</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="contents">Bingo Items (one per line):</label>
+            <textarea id="contents" placeholder="Enter one item per line&#10;Example:&#10;Apple&#10;Banana&#10;Orange&#10;Grapes&#10;...">Apple
+Banana
+Orange
+Grapes
+Watermelon
+Strawberry
+Blueberry
+Pineapple
+Mango
+Peach
+Pear
+Cherry
+Lemon
+Lime
+Coconut
+Kiwi
+Papaya
+Avocado
+Pomegranate
+Fig
+Date
+Guava
+Lychee
+Dragonfruit
+Passionfruit</textarea>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ul>
+                <li>Adjust the sliders to set the number of rows and columns</li>
+                <li>Enter your bingo items (one per line)</li>
+                <li>Click "Generate Bingo Card" to create your card</li>
+                <li>Click on cells to mark them as selected</li>
+                <li>Share the URL to let others play with the same card</li>
+            </ul>
+        </div>
+        
+        <div class="button-container">
+            <button id="generate-btn">Generate Bingo Card</button>
+        </div>
     </div>
-    <div class="instructions">Enter the number of rows and columns for your Bingo game.</div>
-    <div>
-        <label for="rows">Rows:</label>
-        <input type="number" id="rows" min="1" value="3">
-        <label for="cols">Columns:</label>
-        <input type="number" id="cols" min="1" value="3">
-        <button onclick="generateInputFields()">Set Tiles</button>
+    
+    <div class="container" id="card-container" style="display: none;">
+        <h1>Your Bingo Card</h1>
+        <div id="bingo-card"></div>
+        <div class="button-container" style="margin-top: 20px;">
+            <button id="new-card-btn">Create New Card</button>
+        </div>
     </div>
-    <div id="tileInputs"></div>
-    <button id="startGame" onclick="startGame()" style="display:none;">Start Game</button>
-    <div class="bingo-container" id="bingoContainer" style="display:none;"></div>
-
-    <!-- Dark Mode Drawer -->
-    <div class="drawer" id="darkModeDrawer">
-        <h3>Dark Mode Settings</h3>
-        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-    </div>
-    <button class="drawer-toggle" onclick="toggleDrawer()">☰ Dark Mode</button>
 
     <script>
-        let isDarkMode = true;
-
-        // Toggle dark mode
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.style.backgroundColor = isDarkMode ? '#2c2c2c' : '#fff';
-            document.body.style.color = isDarkMode ? '#ffffff' : '#000000';
-            document.body.classList.toggle('light-mode', !isDarkMode);
-
-            // Update input field colors based on the mode
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                if (isDarkMode) {
-                    input.style.backgroundColor = '#444';
-                    input.style.color = '#fff';
-                } else {
-                    input.style.backgroundColor = '#f39c12';
-                    input.style.color = '#2c3e50';
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const rowsSlider = document.getElementById('rows');
+            const rowsValue = document.getElementById('rows-value');
+            const columnsSlider = document.getElementById('columns');
+            const columnsValue = document.getElementById('columns-value');
+            const contentsTextarea = document.getElementById('contents');
+            const generateBtn = document.getElementById('generate-btn');
+            const newCardBtn = document.getElementById('new-card-btn');
+            const bingoCard = document.getElementById('bingo-card');
+            const inputContainer = document.querySelector('.container');
+            const cardContainer = document.getElementById('card-container');
+            
+            // Update slider values display
+            rowsSlider.addEventListener('input', () => {
+                rowsValue.textContent = rowsSlider.value;
             });
-        }
-
-        // Open or close the drawer
-        function toggleDrawer() {
-            const drawer = document.getElementById('darkModeDrawer');
-            drawer.classList.toggle('open');
-        }
-
-        function generateInputFields() {
-            const rows = parseInt(document.getElementById('rows').value, 10);
-            const cols = parseInt(document.getElementById('cols').value, 10);
-            const isSquare = rows === cols;
-            const numTiles = isSquare ? rows * cols - 1 : rows * cols; // Exclude center tile if square
-            const tileInputs = document.getElementById('tileInputs');
-            tileInputs.innerHTML = ""; // Clear previous inputs
-
-            for (let i = 0; i < numTiles; i++) {
-                tileInputs.innerHTML += `
-                    <input type="text" id="tile-${i}" placeholder="Tile ${i + 1}">
-                `;
+            
+            columnsSlider.addEventListener('input', () => {
+                columnsValue.textContent = columnsSlider.value;
+            });
+            
+            // Generate bingo card
+            generateBtn.addEventListener('click', generateBingoCard);
+            
+            // Create new card
+            newCardBtn.addEventListener('click', () => {
+                cardContainer.style.display = 'none';
+                inputContainer.style.display = 'block';
+                window.history.pushState({}, '', '/');
+            });
+            
+            // Check if we're loading a shared card
+            if (window.location.pathname !== '/' && window.location.pathname.length > 1) {
+                loadSharedCard();
             }
-            document.getElementById('startGame').style.display = "inline-block";
-        }
-
-        function startGame() {
-            const gameName = document.getElementById('gameName').value || "Bingo Game";
-            document.title = gameName; // Change the webpage title
-            document.querySelector('h1').textContent = gameName; // Change the visible title
-
-            const rows = parseInt(document.getElementById('rows').value, 10);
-            const cols = parseInt(document.getElementById('cols').value, 10);
-            const isSquare = rows === cols;
-            const numTiles = rows * cols;
-            const bingoContainer = document.getElementById('bingoContainer');
-            const tileInputs = document.getElementById('tileInputs');
-            bingoContainer.innerHTML = ""; // Clear previous game
-            bingoContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            bingoContainer.style.display = "grid";
-
-            let inputIndex = 0;
-            for (let i = 0; i < numTiles; i++) {
-                const tile = document.createElement('div');
-
-                // Center tile logic for square grids
-                if (isSquare && numTiles % 2 === 1 && i === Math.floor(numTiles / 2)) {
-                    tile.classList.add('center-tile');
-                    tile.innerHTML = `<span onclick="handleNautibingoClick()">Nautibingo</span>`;
-                } else {
-                    const tileContent = document.getElementById(`tile-${inputIndex}`)?.value || `Tile ${inputIndex + 1}`;
-                    tile.textContent = tileContent;
-                    tile.addEventListener('click', () => {
-                        tile.classList.toggle('marked');
-                    });
-                    inputIndex++;
+            
+            function generateBingoCard() {
+                const rows = parseInt(rowsSlider.value);
+                const columns = parseInt(columnsSlider.value);
+                const contents = contentsTextarea.value.split('\n').filter(item => item.trim() !== '');
+                
+                // Validate inputs
+                if (contents.length < rows * columns) {
+                    alert(You need at least ${rows * columns} items for a ${rows}x${columns} bingo card. You currently have ${contents.length} items.);
+                    return;
                 }
-
-                bingoContainer.appendChild(tile);
+                
+                // Create a seed based on the current inputs
+                const seed = createSeed(rows, columns, contents);
+                
+                // Update URL without reloading the page
+                window.history.pushState({}, '', /${seed});
+                
+                // Generate the card
+                renderBingoCard(rows, columns, contents, seed);
+                
+                // Show the card, hide the input form
+                inputContainer.style.display = 'none';
+                cardContainer.style.display = 'block';
             }
-            tileInputs.style.display = "none";
-            document.getElementById('startGame').style.display = "none";
-        }
-
-        function handleNautibingoClick() {
-            const centerTile = document.querySelector('.center-tile');
-            centerTile.classList.toggle('clicked');
-        }
+            
+            function createSeed(rows, columns, contents) {
+                // Create a simple seed based on the inputs
+                return btoa(${rows},${columns},${contents.join('|')}).replace(/=/g, '');
+            }
+            
+            function parseSeed(seed) {
+                try {
+                    const decoded = atob(seed);
+                    const parts = decoded.split(',');
+                    const rows = parseInt(parts[0]);
+                    const columns = parseInt(parts[1]);
+                    const contents = parts[2].split('|');
+                    
+                    return { rows, columns, contents };
+                } catch (e) {
+                    return null;
+                }
+            }
+            
+            function loadSharedCard() {
+                const seed = window.location.pathname.substring(1);
+                const params = parseSeed(seed);
+                
+                if (params) {
+                    // Update form values
+                    rowsSlider.value = params.rows;
+                    rowsValue.textContent = params.rows;
+                    columnsSlider.value = params.columns;
+                    columnsValue.textContent = params.columns;
+                    contentsTextarea.value = params.contents.join('\n');
+                    
+                    // Generate the card
+                    renderBingoCard(params.rows, params.columns, params.contents, seed);
+                    
+                    // Show the card, hide the input form
+                    inputContainer.style.display = 'none';
+                    cardContainer.style.display = 'block';
+                } else {
+                    // Invalid seed, redirect to home
+                    window.history.pushState({}, '', '/');
+                }
+            }
+            
+            function renderBingoCard(rows, columns, contents, seed) {
+                // Clear previous card
+                bingoCard.innerHTML = '';
+                
+                // Create a table for the bingo card
+                const table = document.createElement('table');
+                table.className = 'bingo-card';
+                
+                // Shuffle contents using the seed as a deterministic randomizer
+                const shuffledContents = shuffleArray([...contents], seed);
+                
+                // Create rows and cells
+                for (let i = 0; i < rows; i++) {
+                    const tr = document.createElement('tr');
+                    
+                    for (let j = 0; j < columns; j++) {
+                        const td = document.createElement('td');
+                        td.className = 'bingo-cell';
+                        
+                        // Calculate index in the shuffled contents
+                        const index = i * columns + j;
+                        
+                        // Check if this is the center cell (free space)
+                        if (i === Math.floor(rows/2) && j === Math.floor(columns/2) && 
+                            rows % 2 === 1 && columns % 2 === 1) {
+                            td.textContent = 'FREE';
+                            td.classList.add('free');
+                        } else {
+                            td.textContent = shuffledContents[index % shuffledContents.length];
+                        }
+                        
+                        // Add click event to toggle selection
+                        td.addEventListener('click', function() {
+                            this.classList.toggle('selected');
+                        });
+                        
+                        tr.appendChild(td);
+                    }
+                    
+                    table.appendChild(tr);
+                }
+                
+                bingoCard.appendChild(table);
+            }
+            
+            function shuffleArray(array, seed) {
+                // Simple deterministic shuffle based on seed
+                let currentIndex = array.length;
+                let temporaryValue, randomIndex;
+                
+                // Use the seed to generate a predictable "random" sequence
+                const seedNum = seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                
+                // While there remain elements to shuffle...
+                while (currentIndex !== 0) {
+                    // Pick a remaining element...
+                    randomIndex = Math.floor(pseudoRandom(seedNum, currentIndex) * currentIndex);
+                    currentIndex -= 1;
+                    
+                    // And swap it with the current element.
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
+                }
+                
+                return array;
+            }
+            
+            function pseudoRandom(seed, n) {
+                // Simple pseudo-random number generator
+                const x = Math.sin(seed + n) * 10000;
+                return x - Math.floor(x);
+            }
+        });
     </script>
 </body>
 </html>
