@@ -70,6 +70,14 @@
             transform: rotate(-3deg);
         }
         
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
         .editable-title {
             background: transparent;
             border: 2px dashed #666;
@@ -79,7 +87,6 @@
             text-align: center;
             width: 80%;
             max-width: 600px;
-            margin: 20px auto;
             font-family: 'Special Elite', cursive;
             outline: none;
             border-radius: 5px;
@@ -89,6 +96,23 @@
         .editable-title:focus {
             border-color: #ff6b08;
             box-shadow: 0 0 10px rgba(255, 107, 8, 0.5);
+        }
+        
+        .shuffle-btn {
+            background: #333;
+            color: #ffcc00;
+            border: 2px solid #ff6b08;
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Special Elite', cursive;
+        }
+        
+        .shuffle-btn:hover {
+            background: #ff6b08;
+            color: #000;
         }
         
         .control-panel {
@@ -112,23 +136,46 @@
             font-size: 1.2rem;
         }
         
+        /* Apple 2000s style slider */
+        .slider-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
         input[type="range"] {
             width: 100%;
             margin: 10px 0;
             -webkit-appearance: none;
+            height: 16px;
+            background: transparent;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
             height: 8px;
             background: #333;
-            border-radius: 5px;
-            outline: none;
+            border-radius: 4px;
+            border: 1px solid #555;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.3);
         }
         
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             background: #ff6b08;
             border-radius: 50%;
             cursor: pointer;
+            border: 1px solid #ffcc00;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            margin-top: -7px;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
             box-shadow: 0 0 10px #ff6b08;
         }
         
@@ -137,6 +184,7 @@
             font-size: 1.5rem;
             color: #ff6b08;
             margin-top: 5px;
+            text-shadow: 0 0 5px rgba(255, 107, 8, 0.7);
         }
         
         textarea {
@@ -259,17 +307,37 @@
             margin-top: 20px;
             text-align: center;
             color: #ffcc00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         
         .url-share input {
-            width: 100%;
+            flex: 1;
             padding: 10px;
             background: #1a1a1a;
             border: 1px solid #444;
             color: #ffcc00;
             font-family: 'Special Elite', cursive;
-            margin-top: 10px;
-            text-align: center;
+            min-width: 200px;
+        }
+        
+        .copy-btn {
+            background: #333;
+            color: #ffcc00;
+            border: 1px solid #ff6b08;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Special Elite', cursive;
+        }
+        
+        .copy-btn:hover {
+            background: #ff6b08;
+            color: #000;
         }
         
         @media (max-width: 600px) {
@@ -287,6 +355,14 @@
             .bingo-cell {
                 font-size: 0.7rem;
                 padding: 2px;
+            }
+            
+            .title-container {
+                flex-direction: column;
+            }
+            
+            .url-share {
+                flex-direction: column;
             }
         }
         
@@ -309,10 +385,41 @@
             right: 5%;
             animation-delay: 0s;
         }
+        
+        /* Loading animation for shuffle */
+        @keyframes shuffleSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .shuffling {
+            animation: shuffleSpin 0.5s linear infinite;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 107, 8, 0.9);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Special Elite', cursive;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
     <div class="funny-element pumpkin">🎃</div>
+    <div class="toast" id="toast">URL copiada para a área de transferência!</div>
     
     <div class="canvas-area">
         <div class="header">
@@ -326,14 +433,18 @@
         <div class="control-panel" id="control-panel">
             <div class="form-group">
                 <label for="rows">Linhas:</label>
-                <input type="range" id="rows" min="3" max="10" value="5">
-                <div class="slider-value" id="rows-value">5</div>
+                <div class="slider-container">
+                    <input type="range" id="rows" min="3" max="10" value="5">
+                    <div class="slider-value" id="rows-value">5</div>
+                </div>
             </div>
             
             <div class="form-group">
                 <label for="columns">Colunas:</label>
-                <input type="range" id="columns" min="3" max="10" value="5">
-                <div class="slider-value" id="columns-value">5</div>
+                <div class="slider-container">
+                    <input type="range" id="columns" min="3" max="10" value="5">
+                    <div class="slider-value" id="columns-value">5</div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -360,13 +471,17 @@ Pichação obscura</textarea>
         </div>
         
         <div class="bingo-card-container" id="card-container" style="display: none;">
-            <input type="text" class="editable-title" id="card-title" value="Bingo da Meia-Noite" placeholder="Digite o título da sua cartela">
+            <div class="title-container">
+                <input type="text" class="editable-title" id="card-title" value="Bingo da Meia-Noite" placeholder="Digite o título da sua cartela">
+                <button class="shuffle-btn" id="shuffle-btn">🔀 Embaralhar</button>
+            </div>
             
             <div id="bingo-card" class="bingo-card"></div>
             
             <div class="url-share">
-                <p>Compartilhe esta cartela com o link abaixo:</p>
+                <p>Compartilhe esta cartela:</p>
                 <input type="text" id="share-url" readonly>
+                <button class="copy-btn" id="copy-btn">Copiar URL</button>
             </div>
             
             <div class="button-container" style="margin-top: 20px;">
@@ -387,11 +502,18 @@ Pichação obscura</textarea>
             const generateBtn = document.getElementById('generate-btn');
             const newCardBtn = document.getElementById('new-card-btn');
             const printBtn = document.getElementById('print-btn');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            const copyBtn = document.getElementById('copy-btn');
             const bingoCardDiv = document.getElementById('bingo-card');
             const cardTitle = document.getElementById('card-title');
             const shareUrl = document.getElementById('share-url');
+            const toast = document.getElementById('toast');
             const controlPanel = document.getElementById('control-panel');
             const cardContainer = document.getElementById('card-container');
+            
+            // Current seed and card data
+            let currentSeed = '';
+            let currentCardData = null;
             
             // Update slider values display
             rowsSlider.addEventListener('input', () => {
@@ -426,6 +548,12 @@ Pichação obscura</textarea>
                 window.print();
             });
             
+            // Shuffle button
+            shuffleBtn.addEventListener('click', shuffleCard);
+            
+            // Copy URL button
+            copyBtn.addEventListener('click', copyUrlToClipboard);
+            
             // Adjust title font size dynamically
             cardTitle.addEventListener('input', function() {
                 const length = this.value.length;
@@ -450,21 +578,62 @@ Pichação obscura</textarea>
                 }
                 
                 // Create a seed based on the current inputs
-                const seed = createSeed(rows, columns, contents);
+                currentSeed = createSeed(rows, columns, contents);
                 
                 // Update URL with the seed
-                const newUrl = `${window.location.origin}${window.location.pathname}?seed=${seed}`;
+                const newUrl = `${window.location.origin}${window.location.pathname}?seed=${currentSeed}`;
                 window.history.pushState({}, '', newUrl);
                 
                 // Update share URL
                 shareUrl.value = newUrl;
                 
+                // Store current card data
+                currentCardData = {
+                    rows: rows,
+                    columns: columns,
+                    contents: contents
+                };
+                
                 // Generate the card
-                renderBingoCard(rows, columns, contents, seed);
+                renderBingoCard(rows, columns, contents, currentSeed);
                 
                 // Show the card, hide the control panel
                 controlPanel.style.display = 'none';
                 cardContainer.style.display = 'block';
+            }
+            
+            function shuffleCard() {
+                if (!currentCardData) return;
+                
+                // Add shuffle animation
+                shuffleBtn.classList.add('shuffling');
+                
+                // Create new seed with timestamp to force reshuffle
+                const newSeed = createSeed(
+                    currentCardData.rows, 
+                    currentCardData.columns, 
+                    currentCardData.contents
+                );
+                
+                // Update URL with the new seed
+                const newUrl = `${window.location.origin}${window.location.pathname}?seed=${newSeed}`;
+                window.history.pushState({}, '', newUrl);
+                
+                // Update share URL
+                shareUrl.value = newUrl;
+                
+                // Regenerate the card with new seed
+                setTimeout(() => {
+                    renderBingoCard(
+                        currentCardData.rows, 
+                        currentCardData.columns, 
+                        currentCardData.contents, 
+                        newSeed
+                    );
+                    
+                    // Remove shuffle animation
+                    shuffleBtn.classList.remove('shuffling');
+                }, 500);
             }
             
             function createSeed(rows, columns, contents) {
@@ -507,6 +676,14 @@ Pichação obscura</textarea>
                         columnsSlider.value = params.c;
                         columnsValue.textContent = params.c;
                         contentsTextarea.value = params.i.join('\n');
+                        
+                        // Store current seed and card data
+                        currentSeed = seed;
+                        currentCardData = {
+                            rows: params.r,
+                            columns: params.c,
+                            contents: params.i
+                        };
                         
                         // Update share URL
                         shareUrl.value = window.location.href;
@@ -580,6 +757,21 @@ Pichação obscura</textarea>
                 // Simple pseudo-random number generator
                 const x = Math.sin(seed + n) * 10000;
                 return x - Math.floor(x);
+            }
+            
+            function copyUrlToClipboard() {
+                shareUrl.select();
+                shareUrl.setSelectionRange(0, 99999); // For mobile devices
+                
+                navigator.clipboard.writeText(shareUrl.value).then(() => {
+                    // Show toast notification
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
             }
         });
     </script>
