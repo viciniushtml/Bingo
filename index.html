@@ -1,83 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo Card Generator</title>
+    <title>Cartela de Bingo!</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Rock+Salt&display=swap');
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background-color: #0a0a0a;
+            background-image: 
+                radial-gradient(circle, #1a1a1a 0%, #0a0a0a 70%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23222' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: #ccc;
+            font-family: 'Special Elite', cursive;
+            line-height: 1.4;
             padding: 20px;
-            color: #333;
+            position: relative;
+            overflow-x: hidden;
         }
         
-        .container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            width: 90%;
-            max-width: 800px;
-            margin: 20px 0;
+        .canvas-area {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            width: 100%;
         }
         
         h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
-            font-size: 2.5rem;
+            font-size: 5rem;
+            color: #ff6b08;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-family: 'Rock Salt', cursive;
+            text-shadow: 0 0 10px rgba(255, 107, 8, 0.7);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        h2 {
-            margin: 20px 0 10px;
-            color: #3498db;
+        h1 span:nth-child(1) {
+            transform: rotate(-5deg);
+        }
+        
+        h1 span:nth-child(2) {
+            transform: rotate(2deg);
+        }
+        
+        h1 span:nth-child(3) {
+            transform: rotate(-3deg);
+        }
+        
+        .editable-title {
+            background: transparent;
+            border: 2px dashed #666;
+            padding: 10px 20px;
+            font-size: 2rem;
+            color: #ffcc00;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            font-family: 'Special Elite', cursive;
+            outline: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .editable-title:focus {
+            border-color: #ff6b08;
+            box-shadow: 0 0 10px rgba(255, 107, 8, 0.5);
+        }
+        
+        .control-panel {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 25px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
+            color: #ffcc00;
+            font-size: 1.2rem;
         }
         
         input[type="range"] {
             width: 100%;
             margin: 10px 0;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #333;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ff6b08;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff6b08;
         }
         
         .slider-value {
             text-align: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #2980b9;
+            font-size: 1.5rem;
+            color: #ff6b08;
+            margin-top: 5px;
         }
         
         textarea {
             width: 100%;
-            height: 150px;
+            height: 120px;
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            border: 2px solid #444;
+            border-radius: 5px;
             resize: vertical;
             font-size: 1rem;
-        }
-        
-        textarea:focus {
-            border-color: #3498db;
+            background: #1a1a1a;
+            color: #ffcc00;
+            font-family: 'Special Elite', cursive;
             outline: none;
         }
         
@@ -88,155 +160,197 @@
         }
         
         button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 15px 30px;
+            background: linear-gradient(to bottom, #ff6b08, #cc0000);
+            color: #fff;
+            border: 2px solid #ffcc00;
+            padding: 12px 25px;
             font-size: 1.2rem;
-            border-radius: 50px;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            font-family: 'Special Elite', cursive;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px #000;
+            box-shadow: 0 0 10px rgba(255, 107, 8, 0.7);
+            margin: 0 10px;
         }
         
         button:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 107, 8, 1);
+        }
+        
+        .bingo-card-container {
+            margin: 30px auto;
+            width: 100%;
+            max-width: 800px;
+            background: #1a1a1a;
+            border: 3px solid #ff6b08;
+            box-shadow: 0 0 20px rgba(255, 107, 8, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
         }
         
         .bingo-card {
-            display: none;
-            margin: 30px auto;
-            border-collapse: collapse;
+            display: grid;
+            gap: 5px;
+            margin: 0 auto;
             width: 100%;
-            max-width: 600px;
         }
         
         .bingo-cell {
-            border: 3px solid #2c3e50;
-            height: 80px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            vertical-align: middle;
-            font-size: 1.2rem;
-            font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            background-color: #f8f9fa;
+            background-color: #222;
+            color: #ffcc00;
+            font-family: 'Special Elite', cursive;
+            text-shadow: 0 0 5px #000;
+            padding: 5px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bingo-cell:hover {
+            background: #2a2a2a;
+            border-color: #ff6b08;
         }
         
         .bingo-cell.selected {
-            background-color: #3498db;
-            color: white;
+            background-color: #331100;
+            color: #ff6b08;
+            border-color: #ff0000;
             text-decoration: line-through;
         }
         
-        .bingo-cell.free {
-            background-color: #2ecc71;
-            color: white;
-            font-weight: bold;
+        .bingo-cell.nautinoia {
+            background-color: #002233;
+            color: #00ccff;
+            border-color: #00ccff;
+            text-shadow: 0 0 5px #00ccff;
         }
         
         .instructions {
-            background-color: #f8f9fa;
-            border-left: 5px solid #3498db;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-left: 5px solid #ff6b08;
             padding: 15px;
             margin: 20px 0;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 5px 5px 0;
         }
         
         .instructions ul {
             padding-left: 20px;
-            margin: 10px 0;
         }
         
         .instructions li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            color: #ffcc00;
         }
         
         @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-                width: 95%;
+            h1 {
+                font-size: 2.8rem;
+                letter-spacing: 3px;
+                flex-direction: column;
             }
             
-            h1 {
-                font-size: 2rem;
+            .editable-title {
+                font-size: 1.5rem;
+                width: 90%;
             }
             
             .bingo-cell {
-                height: 60px;
-                font-size: 0.9rem;
+                font-size: 0.7rem;
+                padding: 2px;
             }
+        }
+        
+        .funny-element {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 5;
+            opacity: 0.7;
+            pointer-events: none;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .pumpkin {
+            top: 10%;
+            right: 5%;
+            animation-delay: 0s;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 Bingo Card Generator</h1>
-        
-        <div class="form-group">
-            <label for="rows">Number of Rows:</label>
-            <input type="range" id="rows" min="3" max="10" value="5">
-            <div class="slider-value" id="rows-value">5</div>
-        </div>
-        
-        <div class="form-group">
-            <label for="columns">Number of Columns:</label>
-            <input type="range" id="columns" min="3" max="10" value="5">
-            <div class="slider-value" id="columns-value">5</div>
-        </div>
-        
-        <div class="form-group">
-            <label for="contents">Bingo Items (one per line):</label>
-            <textarea id="contents" placeholder="Enter one item per line&#10;Example:&#10;Apple&#10;Banana&#10;Orange&#10;Grapes&#10;...">Apple
-Banana
-Orange
-Grapes
-Watermelon
-Strawberry
-Blueberry
-Pineapple
-Mango
-Peach
-Pear
-Cherry
-Lemon
-Lime
-Coconut
-Kiwi
-Papaya
-Avocado
-Pomegranate
-Fig
-Date
-Guava
-Lychee
-Dragonfruit
-Passionfruit</textarea>
-        </div>
-        
-        <div class="instructions">
-            <h3>How to use:</h3>
-            <ul>
-                <li>Adjust the sliders to set the number of rows and columns</li>
-                <li>Enter your bingo items (one per line)</li>
-                <li>Click "Generate Bingo Card" to create your card</li>
-                <li>Click on cells to mark them as selected</li>
-                <li>Share the URL to let others play with the same card</li>
-            </ul>
-        </div>
-        
-        <div class="button-container">
-            <button id="generate-btn">Generate Bingo Card</button>
-        </div>
-    </div>
+    <div class="funny-element pumpkin">🎃</div>
     
-    <div class="container" id="card-container" style="display: none;">
-        <h1>Your Bingo Card</h1>
-        <div id="bingo-card"></div>
-        <div class="button-container" style="margin-top: 20px;">
-            <button id="new-card-btn">Create New Card</button>
+    <div class="canvas-area">
+        <div class="header">
+            <h1>
+                <span>CAR</span>
+                <span>TELA</span>
+                <span>BINGO!</span>
+            </h1>
+        </div>
+        
+        <div class="control-panel">
+            <div class="form-group">
+                <label for="rows">Linhas:</label>
+                <input type="range" id="rows" min="3" max="10" value="5">
+                <div class="slider-value" id="rows-value">5</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="columns">Colunas:</label>
+                <input type="range" id="columns" min="3" max="10" value="5">
+                <div class="slider-value" id="columns-value">5</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="contents">Itens do Bingo (um por linha):</label>
+                <textarea id="contents">Cidade vazia
+Noite chuvosa
+Sombras alongadas
+Poste quebrado
+Pichação obscura</textarea>
+            </div>
+            
+            <div class="instructions">
+                <ul>
+                    <li>Ajuste os controles para definir o número de linhas e colunas</li>
+                    <li>Digite os itens do bingo (um por linha)</li>
+                    <li>Clique em "Gerar Cartela" para criar sua cartela</li>
+                    <li>Clique nas células para marcá-las como selecionadas</li>
+                </ul>
+            </div>
+            
+            <div class="button-container">
+                <button id="generate-btn">Gerar Cartela</button>
+            </div>
+        </div>
+        
+        <div class="bingo-card-container" id="card-container" style="display: none;">
+            <input type="text" class="editable-title" id="card-title" value="Bingo da Meia-Noite" placeholder="Digite o título da sua cartela">
+            
+            <div id="bingo-card" class="bingo-card"></div>
+            
+            <div class="button-container" style="margin-top: 20px;">
+                <button id="new-card-btn">Criar Nova Cartela</button>
+                <button id="print-btn">Imprimir Cartela</button>
+            </div>
         </div>
     </div>
 
@@ -250,8 +364,10 @@ Passionfruit</textarea>
             const contentsTextarea = document.getElementById('contents');
             const generateBtn = document.getElementById('generate-btn');
             const newCardBtn = document.getElementById('new-card-btn');
-            const bingoCard = document.getElementById('bingo-card');
-            const inputContainer = document.querySelector('.container');
+            const printBtn = document.getElementById('print-btn');
+            const bingoCardDiv = document.getElementById('bingo-card');
+            const cardTitle = document.getElementById('card-title');
+            const controlPanel = document.querySelector('.control-panel');
             const cardContainer = document.getElementById('card-container');
             
             // Update slider values display
@@ -263,20 +379,35 @@ Passionfruit</textarea>
                 columnsValue.textContent = columnsSlider.value;
             });
             
+            // Set initial values
+            rowsValue.textContent = rowsSlider.value;
+            columnsValue.textContent = columnsSlider.value;
+            
             // Generate bingo card
             generateBtn.addEventListener('click', generateBingoCard);
             
             // Create new card
             newCardBtn.addEventListener('click', () => {
                 cardContainer.style.display = 'none';
-                inputContainer.style.display = 'block';
-                window.history.pushState({}, '', '/');
+                controlPanel.style.display = 'block';
             });
             
-            // Check if we're loading a shared card
-            if (window.location.pathname !== '/' && window.location.pathname.length > 1) {
-                loadSharedCard();
-            }
+            // Print card
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+            
+            // Adjust title font size dynamically
+            cardTitle.addEventListener('input', function() {
+                const length = this.value.length;
+                if (length > 30) {
+                    this.style.fontSize = '1.5rem';
+                } else if (length > 20) {
+                    this.style.fontSize = '1.8rem';
+                } else {
+                    this.style.fontSize = '2rem';
+                }
+            });
             
             function generateBingoCard() {
                 const rows = parseInt(rowsSlider.value);
@@ -285,139 +416,59 @@ Passionfruit</textarea>
                 
                 // Validate inputs
                 if (contents.length < rows * columns) {
-                    alert(You need at least ${rows * columns} items for a ${rows}x${columns} bingo card. You currently have ${contents.length} items.);
+                    alert(`Você precisa de pelo menos ${rows * columns} itens para uma cartela de bingo ${rows}x${columns}. Atualmente você tem ${contents.length} itens.`);
                     return;
                 }
                 
-                // Create a seed based on the current inputs
-                const seed = createSeed(rows, columns, contents);
-                
-                // Update URL without reloading the page
-                window.history.pushState({}, '', /${seed});
-                
                 // Generate the card
-                renderBingoCard(rows, columns, contents, seed);
+                renderBingoCard(rows, columns, contents);
                 
-                // Show the card, hide the input form
-                inputContainer.style.display = 'none';
+                // Show the card, hide the control panel
+                controlPanel.style.display = 'none';
                 cardContainer.style.display = 'block';
             }
             
-            function createSeed(rows, columns, contents) {
-                // Create a simple seed based on the inputs
-                return btoa(${rows},${columns},${contents.join('|')}).replace(/=/g, '');
-            }
-            
-            function parseSeed(seed) {
-                try {
-                    const decoded = atob(seed);
-                    const parts = decoded.split(',');
-                    const rows = parseInt(parts[0]);
-                    const columns = parseInt(parts[1]);
-                    const contents = parts[2].split('|');
-                    
-                    return { rows, columns, contents };
-                } catch (e) {
-                    return null;
-                }
-            }
-            
-            function loadSharedCard() {
-                const seed = window.location.pathname.substring(1);
-                const params = parseSeed(seed);
-                
-                if (params) {
-                    // Update form values
-                    rowsSlider.value = params.rows;
-                    rowsValue.textContent = params.rows;
-                    columnsSlider.value = params.columns;
-                    columnsValue.textContent = params.columns;
-                    contentsTextarea.value = params.contents.join('\n');
-                    
-                    // Generate the card
-                    renderBingoCard(params.rows, params.columns, params.contents, seed);
-                    
-                    // Show the card, hide the input form
-                    inputContainer.style.display = 'none';
-                    cardContainer.style.display = 'block';
-                } else {
-                    // Invalid seed, redirect to home
-                    window.history.pushState({}, '', '/');
-                }
-            }
-            
-            function renderBingoCard(rows, columns, contents, seed) {
+            function renderBingoCard(rows, columns, contents) {
                 // Clear previous card
-                bingoCard.innerHTML = '';
+                bingoCardDiv.innerHTML = '';
                 
-                // Create a table for the bingo card
-                const table = document.createElement('table');
-                table.className = 'bingo-card';
+                // Set grid layout
+                bingoCardDiv.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+                bingoCardDiv.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
                 
-                // Shuffle contents using the seed as a deterministic randomizer
-                const shuffledContents = shuffleArray([...contents], seed);
+                // Shuffle contents
+                const shuffledContents = shuffleArray([...contents]);
                 
-                // Create rows and cells
-                for (let i = 0; i < rows; i++) {
-                    const tr = document.createElement('tr');
+                // Create cells
+                for (let i = 0; i < rows * columns; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'bingo-cell';
                     
-                    for (let j = 0; j < columns; j++) {
-                        const td = document.createElement('td');
-                        td.className = 'bingo-cell';
-                        
-                        // Calculate index in the shuffled contents
-                        const index = i * columns + j;
-                        
-                        // Check if this is the center cell (free space)
-                        if (i === Math.floor(rows/2) && j === Math.floor(columns/2) && 
-                            rows % 2 === 1 && columns % 2 === 1) {
-                            td.textContent = 'FREE';
-                            td.classList.add('free');
-                        } else {
-                            td.textContent = shuffledContents[index % shuffledContents.length];
-                        }
-                        
-                        // Add click event to toggle selection
-                        td.addEventListener('click', function() {
-                            this.classList.toggle('selected');
-                        });
-                        
-                        tr.appendChild(td);
+                    // Check if this is the center cell (nautinoia space)
+                    if (i === Math.floor(rows * columns / 2) && 
+                        rows % 2 === 1 && columns % 2 === 1) {
+                        cell.textContent = 'NAUTINOIA';
+                        cell.classList.add('nautinoia');
+                    } else {
+                        cell.textContent = shuffledContents[i % shuffledContents.length];
                     }
                     
-                    table.appendChild(tr);
-                }
-                
-                bingoCard.appendChild(table);
-            }
-            
-            function shuffleArray(array, seed) {
-                // Simple deterministic shuffle based on seed
-                let currentIndex = array.length;
-                let temporaryValue, randomIndex;
-                
-                // Use the seed to generate a predictable "random" sequence
-                const seedNum = seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                
-                // While there remain elements to shuffle...
-                while (currentIndex !== 0) {
-                    // Pick a remaining element...
-                    randomIndex = Math.floor(pseudoRandom(seedNum, currentIndex) * currentIndex);
-                    currentIndex -= 1;
+                    // Add click event to toggle selection
+                    cell.addEventListener('click', function() {
+                        this.classList.toggle('selected');
+                    });
                     
-                    // And swap it with the current element.
-                    temporaryValue = array[currentIndex];
-                    array[currentIndex] = array[randomIndex];
-                    array[randomIndex] = temporaryValue;
+                    bingoCardDiv.appendChild(cell);
                 }
-                
-                return array;
             }
             
-            function pseudoRandom(seed, n) {
-                // Simple pseudo-random number generator
-                const x = Math.sin(seed + n) * 10000;
-                return x - Math.floor(x);
+            function shuffleArray(array) {
+                // Simple shuffle algorithm
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
             }
         });
     </script>
