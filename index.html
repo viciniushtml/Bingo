@@ -1,476 +1,249 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartela de Bingo!</title>
+    <title>Customizable Bingo Game</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Rock+Salt&display=swap');
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
+        /* Body and global styles */
         body {
-            background-color: #0a0a0a;
-            background-image: 
-                radial-gradient(circle, #1a1a1a 0%, #0a0a0a 70%),
-                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23222' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
-            min-height: 100vh;
-            color: #ccc;
-            font-family: 'Special Elite', cursive;
-            line-height: 1.4;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        .canvas-area {
-            position: relative;
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
+            font-family: Arial, sans-serif;
             text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            width: 100%;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            margin: 20px;
+            transition: background-color 0.3s;
         }
-        
+
         h1 {
-            font-size: 5rem;
-            color: #ff6b08;
-            letter-spacing: 8px;
-            text-transform: uppercase;
             margin-bottom: 10px;
-            font-family: 'Rock Salt', cursive;
-            text-shadow: 0 0 10px rgba(255, 107, 8, 0.7);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
         }
-        
-        h1 span:nth-child(1) {
-            transform: rotate(-5deg);
-        }
-        
-        h1 span:nth-child(2) {
-            transform: rotate(2deg);
-        }
-        
-        h1 span:nth-child(3) {
-            transform: rotate(-3deg);
-        }
-        
-        .editable-title {
-            background: transparent;
-            border: 2px dashed #666;
-            padding: 10px 20px;
-            font-size: 2rem;
-            color: #ffcc00;
-            text-align: center;
-            width: 80%;
-            max-width: 600px;
-            margin: 20px auto;
-            font-family: 'Special Elite', cursive;
-            outline: none;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .editable-title:focus {
-            border-color: #ff6b08;
-            box-shadow: 0 0 10px rgba(255, 107, 8, 0.5);
-        }
-        
-        .control-panel {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 25px;
-            border: 2px solid #444;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            position: relative;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ffcc00;
-            font-size: 1.2rem;
-        }
-        
-        input[type="range"] {
-            width: 100%;
-            margin: 10px 0;
-            -webkit-appearance: none;
-            height: 8px;
-            background: #333;
-            border-radius: 5px;
-            outline: none;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #ff6b08;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px #ff6b08;
-        }
-        
-        .slider-value {
-            text-align: center;
-            font-size: 1.5rem;
-            color: #ff6b08;
-            margin-top: 5px;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            resize: vertical;
-            font-size: 1rem;
-            background: #1a1a1a;
-            color: #ffcc00;
-            font-family: 'Special Elite', cursive;
-            outline: none;
-        }
-        
-        .button-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
-        
-        button {
-            background: linear-gradient(to bottom, #ff6b08, #cc0000);
-            color: #fff;
-            border: 2px solid #ffcc00;
-            padding: 12px 25px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Special Elite', cursive;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 2px #000;
-            box-shadow: 0 0 10px rgba(255, 107, 8, 0.7);
-            margin: 0 10px;
-        }
-        
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 107, 8, 1);
-        }
-        
-        .bingo-card-container {
-            margin: 30px auto;
-            width: 100%;
-            max-width: 800px;
-            background: #1a1a1a;
-            border: 3px solid #ff6b08;
-            box-shadow: 0 0 20px rgba(255, 107, 8, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
-        }
-        
-        .bingo-card {
-            display: grid;
-            gap: 5px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        .bingo-cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #222;
-            color: #ffcc00;
-            font-family: 'Special Elite', cursive;
-            text-shadow: 0 0 5px #000;
-            padding: 5px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .bingo-cell:hover {
-            background: #2a2a2a;
-            border-color: #ff6b08;
-        }
-        
-        .bingo-cell.selected {
-            background-color: #331100;
-            color: #ff6b08;
-            border-color: #ff0000;
-            text-decoration: line-through;
-        }
-        
-        .bingo-cell.nautinoia {
-            background-color: #002233;
-            color: #00ccff;
-            border-color: #00ccff;
-            text-shadow: 0 0 5px #00ccff;
-        }
-        
+
         .instructions {
-            background-color: rgba(0, 0, 0, 0.5);
-            border-left: 5px solid #ff6b08;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 5px 5px 0;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #ccc;
         }
-        
-        .instructions ul {
-            padding-left: 20px;
+
+        .game-name-container {
+            margin-bottom: 20px;
         }
-        
-        .instructions li {
-            margin-bottom: 10px;
-            color: #ffcc00;
+
+        .game-name-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
         }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2.8rem;
-                letter-spacing: 3px;
-                flex-direction: column;
-            }
-            
-            .editable-title {
-                font-size: 1.5rem;
-                width: 90%;
-            }
-            
-            .bingo-cell {
-                font-size: 0.7rem;
-                padding: 2px;
-            }
+
+        .bingo-container {
+            display: grid;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px auto;
+            width: fit-content;
         }
-        
-        .funny-element {
+
+        /* Default tile styles for dark mode */
+        .bingo-container > div {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #ffffff;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        /* Cheerful colors for light mode */
+        body.light-mode .bingo-container > div {
+            background-color: #f39c12;
+            color: #2c3e50;
+        }
+
+        body.light-mode .bingo-container > div.marked {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        /* Hover effect */
+        .bingo-container > div:hover {
+            transform: scale(1.05);
+        }
+
+        /* Center tile styles */
+        .bingo-container > div.center-tile {
+            background-color: #555;
+            color: white;
+            font-style: italic;
+            cursor: pointer;
+        }
+
+        .bingo-container > div.center-tile span {
+            transform: rotate(-45deg);
+            display: inline-block;
+        }
+
+        .bingo-container > div.center-tile.clicked {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        /* Button and input styles */
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input {
+            background-color: #444;
+            color: white;
+        }
+
+        /* Light mode specific inputs */
+        body.light-mode input {
+            background-color: #f39c12;
+            color: #2c3e50;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Dark mode drawer styles */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #333;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer button {
+            background-color: #222;
+            border: 1px solid #fff;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .drawer h3 {
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .drawer-toggle {
             position: absolute;
-            font-size: 2rem;
-            z-index: 5;
-            opacity: 0.7;
-            pointer-events: none;
-            animation: float 6s infinite ease-in-out;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        .pumpkin {
-            top: 10%;
-            right: 5%;
-            animation-delay: 0s;
+            top: 20px;
+            left: 20px;
+            background-color: #444;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1100;
         }
     </style>
 </head>
-<body>
-    <div class="funny-element pumpkin">🎃</div>
-    
-    <div class="canvas-area">
-        <div class="header">
-            <h1>
-                <span>CAR</span>
-                <span>TELA</span>
-                <span>BINGO!</span>
-            </h1>
-        </div>
-        
-        <div class="control-panel">
-            <div class="form-group">
-                <label for="rows">Linhas:</label>
-                <input type="range" id="rows" min="3" max="10" value="5">
-                <div class="slider-value" id="rows-value">5</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="columns">Colunas:</label>
-                <input type="range" id="columns" min="3" max="10" value="5">
-                <div class="slider-value" id="columns-value">5</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="contents">Itens do Bingo (um por linha):</label>
-                <textarea id="contents">Cidade vazia
-Noite chuvosa
-Sombras alongadas
-Poste quebrado
-Pichação obscura</textarea>
-            </div>
-            
-            <div class="instructions">
-                <ul>
-                    <li>Ajuste os controles para definir o número de linhas e colunas</li>
-                    <li>Digite os itens do bingo (um por linha)</li>
-                    <li>Clique em "Gerar Cartela" para criar sua cartela</li>
-                    <li>Clique nas células para marcá-las como selecionadas</li>
-                </ul>
-            </div>
-            
-            <div class="button-container">
-                <button id="generate-btn">Gerar Cartela</button>
-            </div>
-        </div>
-        
-        <div class="bingo-card-container" id="card-container" style="display: none;">
-            <input type="text" class="editable-title" id="card-title" value="Bingo da Meia-Noite" placeholder="Digite o título da sua cartela">
-            
-            <div id="bingo-card" class="bingo-card"></div>
-            
-            <div class="button-container" style="margin-top: 20px;">
-                <button id="new-card-btn">Criar Nova Cartela</button>
-                <button id="print-btn">Imprimir Cartela</button>
-            </div>
-        </div>
+<body class="light-mode">
+    <h1>Customizable Bingo Game</h1>
+    <div class="game-name-container">
+        <label for="gameName">Game Name:</label>
+        <input type="text" id="gameName" placeholder="Enter game name" />
     </div>
+    <div class="instructions">Enter the number of rows and columns for your Bingo game.</div>
+    <div>
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" min="1" value="3">
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" min="1" value="3">
+        <button onclick="generateInputFields()">Set Tiles</button>
+    </div>
+    <div id="tileInputs"></div>
+    <button id="startGame" onclick="startGame()" style="display:none;">Start Game</button>
+    <div class="bingo-container" id="bingoContainer" style="display:none;"></div>
+
+    <!-- Dark Mode Drawer -->
+    <div class="drawer" id="darkModeDrawer">
+        <h3>Dark Mode Settings</h3>
+        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    </div>
+    <button class="drawer-toggle" onclick="toggleDrawer()">☰ Dark Mode</button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get DOM elements
-            const rowsSlider = document.getElementById('rows');
-            const rowsValue = document.getElementById('rows-value');
-            const columnsSlider = document.getElementById('columns');
-            const columnsValue = document.getElementById('columns-value');
-            const contentsTextarea = document.getElementById('contents');
-            const generateBtn = document.getElementById('generate-btn');
-            const newCardBtn = document.getElementById('new-card-btn');
-            const printBtn = document.getElementById('print-btn');
-            const bingoCardDiv = document.getElementById('bingo-card');
-            const cardTitle = document.getElementById('card-title');
-            const controlPanel = document.querySelector('.control-panel');
-            const cardContainer = document.getElementById('card-container');
-            
-            // Update slider values display
-            rowsSlider.addEventListener('input', () => {
-                rowsValue.textContent = rowsSlider.value;
-            });
-            
-            columnsSlider.addEventListener('input', () => {
-                columnsValue.textContent = columnsSlider.value;
-            });
-            
-            // Set initial values
-            rowsValue.textContent = rowsSlider.value;
-            columnsValue.textContent = columnsSlider.value;
-            
-            // Generate bingo card
-            generateBtn.addEventListener('click', generateBingoCard);
-            
-            // Create new card
-            newCardBtn.addEventListener('click', () => {
-                cardContainer.style.display = 'none';
-                controlPanel.style.display = 'block';
-            });
-            
-            // Print card
-            printBtn.addEventListener('click', () => {
-                window.print();
-            });
-            
-            // Adjust title font size dynamically
-            cardTitle.addEventListener('input', function() {
-                const length = this.value.length;
-                if (length > 30) {
-                    this.style.fontSize = '1.5rem';
-                } else if (length > 20) {
-                    this.style.fontSize = '1.8rem';
-                } else {
-                    this.style.fontSize = '2rem';
-                }
-            });
-            
-            function generateBingoCard() {
-                const rows = parseInt(rowsSlider.value);
-                const columns = parseInt(columnsSlider.value);
-                const contents = contentsTextarea.value.split('\n').filter(item => item.trim() !== '');
-                
-                // Validate inputs
-                if (contents.length < rows * columns) {
-                    alert(`Você precisa de pelo menos ${rows * columns} itens para uma cartela de bingo ${rows}x${columns}. Atualmente você tem ${contents.length} itens.`);
-                    return;
-                }
-                
-                // Generate the card
-                renderBingoCard(rows, columns, contents);
-                
-                // Show the card, hide the control panel
-                controlPanel.style.display = 'none';
-                cardContainer.style.display = 'block';
-            }
-            
-            function renderBingoCard(rows, columns, contents) {
-                // Clear previous card
-                bingoCardDiv.innerHTML = '';
-                
-                // Set grid layout
-                bingoCardDiv.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-                bingoCardDiv.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-                
-                // Shuffle contents
-                const shuffledContents = shuffleArray([...contents]);
-                
-                // Create cells
-                for (let i = 0; i < rows * columns; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'bingo-cell';
-                    
-                    // Check if this is the center cell (nautinoia space)
-                    if (i === Math.floor(rows * columns / 2) && 
-                        rows % 2 === 1 && columns % 2 === 1) {
-                        cell.textContent = 'NAUTINOIA';
-                        cell.classList.add('nautinoia');
-                    } else {
-                        cell.textContent = shuffledContents[i % shuffledContents.length];
-                    }
-                    
-                    // Add click event to toggle selection
-                    cell.addEventListener('click', function() {
-                        this.classList.toggle('selected');
-                    });
-                    
-                    bingoCardDiv.appendChild(cell);
-                }
-            }
-            
-            function shuffleArray(array) {
-                // Simple shuffle algorithm
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-            }
+        let isDarkMode = document.body.classList.contains("light-mode") ? false : true;
+
+        // Garantir que tudo seja estilizado corretamente no carregamento
+        document.addEventListener("DOMContentLoaded", () => {
+            applyModeStyles();
         });
-    </script>
-</body>
-</html>
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle("light-mode", !isDarkMode);
+            applyModeStyles();
+        }
+
+        function applyModeStyles() {
+            // Ajustar a cor de fundo e texto do body
+            document.body.style.backgroundColor = isDarkMode ? '#2c2c2c' : '#fff';
+            document.body.style.color = isDarkMode ? '#ffffff' : '#000000';
+
+            // Ajustar cores dos inputs
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.style.backgroundColor = isDarkMode ? '#444' : '#f39c12';
+                input.style.color = isDarkMode ? '#fff' : '#2c3e50';
+            });
+
+            // Ajustar cores das tiles
+            const tiles = document.querySelectorAll('.bingo-container > div');
+            tiles.forEach(tile => {
+                if (tile.classList.contains("marked")) {
+                    tile.style.backgroundColor = isDarkMode ? "#e74c3c" : "#e74c3c";
+                    tile.style.color = isDarkMode ? "#fff" : "#fff";
+                } else if (tile.classList.contains("center-tile")) {
+                    tile.style.backgroundColor = isDarkMode ? "#555" : "#f39c12";
+                    tile.style.color = isDarkMode ? "#fff" : "#2c3e50";
+                } else {
+                    tile.style.backgroundColor = isDarkMode ? "#333" : "#f39c12";
+                    tile.style.color = isDarkMode ? "#fff" : "#2c3e50";
+                }
+            });
+        }
+
+        // Gerar campos de input para os tiles
+        function generateInputFields() {
+            const rows = parseInt(document.getElementById('rows').value, 10);
+            const cols = parseInt(document.getElementById('cols').value, 10);
+            const isSquare = rows === cols;
+            const numTiles = isSquare ? rows * cols - 1 : rows * cols;
+            const tileInputs = document.getElementById('tileInputs');
+            tileInputs.innerHTML = ""; // Limpar inputs
